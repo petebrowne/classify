@@ -1,11 +1,11 @@
-Classify.js
-===========
+Classify
+========
 
 #### A Ruby-like Module & Class Inheritance Library for Javascript
 
-Classify.js is a simple, reusable library for Javascript Class Inheritance without any dependencies. It also includes a Ruby-like system of Modules for namespacing and bundling methods. It's a good fit along side frameworks like [jQuery](http://jquery.com/) for complex Javascript applications.
+Classify is a simple, reusable library for Javascript Class Inheritance without any dependencies. It also includes a Ruby-like system of Modules for namespacing and bundling methods. It's a good fit along side frameworks like [jQuery](http://jquery.com/) for complex Javascript applications.
 
-Classify.js's syntax is inspired by [Foundation.js](http://github.com/grockit/june/blob/master/vendor/foundation.js) and uses concepts from John Resig's [Simple Class Inheritance](http://ejohn.org/blog/simple-javascript-inheritance/) and [Prototype](http://www.prototypejs.org/).
+Classify's syntax is inspired by [Foundation.js](http://github.com/grockit/june/blob/master/vendor/foundation.js) and uses concepts from John Resig's [Simple Class Inheritance](http://ejohn.org/blog/simple-javascript-inheritance/) and [Prototype](http://www.prototypejs.org/).
 
 ### Features:
 
@@ -14,8 +14,8 @@ Classify.js's syntax is inspired by [Foundation.js](http://github.com/grockit/ju
 * Add Module methods to Classes, Objects, and globally
 
 
-Using Classify.js
------------------
+Using Classify
+--------------
   
 ### Classes
 
@@ -54,7 +54,7 @@ To define a constructor, define a method named "initialize":
   
 #### Inheritance
 
-To inherit from another class, just pass the class to the classify method:
+To inherit from another class, just pass the class to the `classify` method:
 
     classify("Animal", function() {
       def("speak", function() {
@@ -74,7 +74,7 @@ To inherit from another class, just pass the class to the classify method:
     var dog = new Dog();
     dog.speak(); // "Hello, ruff"
   
-You can also see you have access to the super method by using `this._super` within the method definition.
+You have access to the super method by using `this._super` within the method definition.
 
 #### Scope
 
@@ -93,7 +93,7 @@ Within the class definition, `this` refers to the class, not the instance. This 
 
 #### Reopening
 
-Classes can be reopened to add more or redefine methods:
+Classes can be reopened to add more methods or even to redefine methods:
 
     classify("Dog", function() {
       def("bark", function() {
