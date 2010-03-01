@@ -279,4 +279,22 @@ Screw.Unit(function() {
       });
     });
   });
+  
+  //----------------------------------
+  //  #alias
+  //----------------------------------
+  
+  describe("#alias", function() {
+    it("should create an alias for the given method", function() {
+      classify("Dog", function() {
+        def("bark", function() {
+          return "ruff";
+        });
+        alias("speak", "bark");
+      });
+      
+      expect(new Dog().speak()).to(equal, "ruff");
+    });
+  });
+  
 });
