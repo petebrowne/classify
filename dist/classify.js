@@ -24,7 +24,7 @@ var namespace = window,
 namespace.classify = function(superclassOrName, definitionOrName, definition) {
   var superclass, object, name;
 
-  if (definition == undefined) {
+  if (definition === undefined) {
     name       = superclassOrName;
     definition = definitionOrName;
   }
@@ -58,7 +58,7 @@ namespace.classify = function(superclassOrName, definitionOrName, definition) {
 namespace.def = function(objectOrName, definitionOrName, definition) {
   var object, name;
 
-  if (definition == undefined) {
+  if (definition === undefined) {
     object     = currentObject;
     name       = objectOrName;
     definition = definitionOrName;
@@ -82,7 +82,7 @@ namespace.def = function(objectOrName, definitionOrName, definition) {
  * to be included into other Classes.
  */
 namespace.module = function(name, definition) {
-  if (!currentObject[name]) {
+  if (currentObject[name] === undefined) {
     currentObject[name] = {};
   }
 
@@ -102,17 +102,17 @@ namespace.module = function(name, definition) {
 namespace.include = function(moduleOrName, module) {
   var object, name;
 
-  if (module) {
+  if (module === undefined) {
+    module = moduleOrName;
+    object = (currentClass) ? currentClass.prototype : currentObject;
+  }
+  else {
     name = moduleOrName;
     object = currentObject[name];
 
     if (object.prototype) {
       object = object.prototype;
     }
-  }
-  else {
-    module = moduleOrName;
-    object = (currentClass) ? currentClass.prototype : currentObject;
   }
 
   addModule(object, module);
@@ -129,13 +129,15 @@ namespace.include = function(moduleOrName, module) {
 namespace.extend = function(nameOrModule, module) {
   var object, name;
 
-  if (module) {
+  if (module === undefined) {
+    if (currentClass !== null) {
+      module = nameOrModule;
+      object = currentClass;
+    }
+  }
+  else {
     name   = nameOrModule;
     object = currentObject[name];
-  }
-  else if (currentClass) {
-    module = nameOrModule;
-    object = currentClass;
   }
 
   addModule(object, module);
@@ -169,7 +171,7 @@ var withCurrentObject = function(newObject, block) {
 
   buildClass = function(superclass) {
     var newClass = function() {
-      if (!inheriting && this.initialize) {
+      if (!inheriting && this.initialize !== undefined) {
         this.initialize.apply(this, arguments);
       }
     }
@@ -187,7 +189,7 @@ var withCurrentObject = function(newObject, block) {
   },
 
   addModule = function(object, module) {
-    if (!object || !module) {
+    if (object === undefined || module === undefined) {
       return;
     }
 
@@ -197,25 +199,22 @@ var withCurrentObject = function(newObject, block) {
   },
 
   addSuperMethod = function(name, definition) {
-    var superclass = currentClass
-      && currentClass.superclass
+    var superclass = currentClass !== null
+      && currentClass.superclass !== undefined
       && currentClass.superclass.prototype;
 
     if (superclass
       && typeof definition === "function"
-      && typeof definition === "function"
+      && typeof superclass[name] === "function"
       && containsSuper.test(definition)) {
 
-      return (function(name, definition) {
-        return function() {
-          var temp    = this._super;
-          this._super = superclass[name];
-          var result  = definition.apply(this, arguments);
-          this._super = temp;
+      return function() {
+        this._super = superclass[name];
+        var result  = definition.apply(this, arguments);
+        this._super = undefined;
 
-          return result;
-        };
-      })(name, definition);
+        return result;
+      };
     }
 
     return definition;

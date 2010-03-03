@@ -178,7 +178,7 @@ Modules methods can be included into classes:
     
 #### Extend
 
-Module methods can be added as class methods using extend:
+Module methods can be added as class methods using `extend`:
 
     module("Inflector", function() {
       def("dasherize", function(string) {
@@ -194,6 +194,16 @@ Module methods can be added as class methods using extend:
     // extend("String", Inflector);
     
     String.dasherize("underscored_name"); // "underscored-name"
+    
+### Alias
+
+Methods can be aliased with other names using `alias`:
+
+    classify("String", function() {
+      alias("upcase", "toUpperCase");
+    });
+    
+    "upcase".upcase(); // "UPCASE";
   
 
 Copyright
