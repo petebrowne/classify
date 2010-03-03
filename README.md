@@ -64,7 +64,7 @@ To inherit from another class, just pass the class to the `classify` method:
     
     classify(Animal, "Dog", function() {
       def("speak", function() {
-        return this._super() + ", ruff";
+        return this.callSuper() + ", ruff";
       });
     });
     
@@ -74,7 +74,30 @@ To inherit from another class, just pass the class to the `classify` method:
     var dog = new Dog();
     dog.speak(); // "Hello, ruff"
   
-You have access to the super method by using `this._super` within the method definition.
+You have access to the super method by using `this.callSuper` within the method definition. The super method will automatically get the arguments from the method definition, but you can also override them if need be:
+
+    classify("Vehicle", function() {
+      def("go", function(distance) {
+        return distance / this.speed;
+      });
+    });
+    
+    classify(Vehicle, "Car", function() {
+      def("go", function(distance) {
+        if (this.hasFuel) {
+          this.callSuper(distance);
+        }
+        else {
+          this.callSuper(0);
+        }
+      });
+    });
+    
+    var car = new Car();
+    car.speed = 100;
+    car.go(500); // 0
+    car.hasFuel = true;
+    car.go(500); // 5 
 
 #### Scope
 
@@ -156,6 +179,8 @@ Methods defined on modules behave like class methods:
     
     Inflector.dasherize("underscored_name"); // "underscored-name"
     
+_Note: This is actually different than the Ruby Module implementation. This was done to keep the code very simple._
+    
 #### Include
 
 Modules methods can be included into classes:
@@ -192,6 +217,18 @@ Module methods can be added as class methods using `extend`:
     
     // or alternatively (if class is already defined):
     // extend("String", Inflector);
+    
+    String.dasherize("underscored_name"); // "underscored-name"
+    
+Class Methods can also be added using `extend`:
+
+    classify("String", function() {
+      extend(function() {
+        def("dasherize", function(string) {
+          return string.replace(/_/g, '-');
+        });
+      });
+    });
     
     String.dasherize("underscored_name"); // "underscored-name"
     

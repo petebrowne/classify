@@ -7,9 +7,7 @@ var namespace = window,
 
   currentClass = null,
 
-  inheriting = false,
-
-  containsSuper = /xyz/.test(function() { xyz; }) ? /\b_super\b/ : /.*/;
+  inheriting = false;
 
 
 /**
@@ -193,8 +191,15 @@ var withCurrentObject = function(newObject, block) {
       return;
     }
 
-    for (var name in module) {
-      object[name] = module[name];
+    if (typeof module === "function") {
+      withCurrentObject(object, function() {
+        module.call(object);
+      });
+    }
+    else {
+      for (var name in module) {
+        object[name] = module[name];
+      }
     }
   },
 
@@ -206,18 +211,31 @@ var withCurrentObject = function(newObject, block) {
     if (superclass
       && typeof definition === "function"
       && typeof superclass[name] === "function"
-      && containsSuper.test(definition)) {
+      && callsSuper(definition)) {
 
       return function() {
-        this._super = superclass[name];
-        var result  = definition.apply(this, arguments);
-        this._super = undefined;
+        var args = arguments,
+            currentSuper = this.callSuper;
+
+        this.callSuper = function() {
+          for (var i = 0, n = arguments.length; i < n; i++) {
+            args[i] = arguments[i];
+          }
+          return superclass[name].apply(this, args);
+        }
+
+        var result = definition.apply(this, arguments);
+        this.callSuper = currentSuper;
 
         return result;
       };
     }
 
     return definition;
+  },
+
+  callsSuper = function(method) {
+    return /\bcallSuper\b/.test(method.toString());
   };
 
 })(window);

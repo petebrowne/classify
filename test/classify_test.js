@@ -86,10 +86,10 @@ Screw.Unit(function() {
             
             def("go", function(distance) {
               if (this.hasFuel) {
-                return this._super(distance);
+                return this.callSuper();
               }
               else {
-                throw new Error("Car must have fuel to go...");
+                return this.callSuper(0);
               }
             });
           });
@@ -109,9 +109,14 @@ Screw.Unit(function() {
           expect(car.accelerate(50)).to(equal, 150);
         });
         
-        it("should access superclass methods using super", function() {
+        it("should access superclass methods using #callSuper", function() {
           car.fuelUp();
           expect(car.go(500)).to(equal, 5);
+        });
+        
+        it("should allow override of default parameters when using #callSuper", function() {
+          expect(car.hasFuel).to(be_false);
+          expect(car.go(500)).to(equal, 0);
         });
       });
     });
@@ -264,6 +269,18 @@ Screw.Unit(function() {
         });
         
         expect(MathClass.add(2, 2)).to(equal, 4);
+      });
+      
+      it("should be able to add class methods with a function definition", function() {
+        classify("MathClass", function() {
+          extend(function() {
+            def("subtract", function(start, value) {
+              return start - value;
+            });
+          });
+        });
+        
+        expect(MathClass.subtract(2, 2)).to(equal, 0);
       });
     });
     
