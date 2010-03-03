@@ -85,7 +85,7 @@ You have access to the super method by using `this.callSuper` within the method 
     classify(Vehicle, "Car", function() {
       def("go", function(distance) {
         if (this.hasFuel) {
-          this.callSuper(distance);
+          this.callSuper();
         }
         else {
           this.callSuper(0);
