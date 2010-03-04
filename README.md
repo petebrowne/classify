@@ -97,22 +97,7 @@ You have access to the super method by using `this.callSuper` within the method 
     car.speed = 100;
     car.go(500); // 0
     car.hasFuel = true;
-    car.go(500); // 5 
-
-#### Scope
-
-Within the class definition, `this` refers to the class, not the instance. This is similar to how Ruby class definitions work. This allows you to easily define class methods and constants:
-
-    classify("Animate", function() {
-      this.SPEED = 5;
-      
-      def(this, "to", function(value) {
-        return value / this.SPEED;
-      });
-    });
-    
-    alert(Animate.SPEED); // 5
-    Animate.to(10); // 2
+    car.go(500); // 5
 
 #### Reopening
 

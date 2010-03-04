@@ -36,6 +36,8 @@ Screw.Unit(function() {
       
       before(function() {
         classify("Vehicle", function() {
+          this.types = [ "Bike", "Car" ];
+          
           def("initialize", function(wheels, speed) {
             this.wheels = wheels;
             this.speed  = speed;
@@ -48,10 +50,6 @@ Screw.Unit(function() {
           def("accelerate", function(speed) {
             this.speed += speed;
             return this.speed;
-          });
-          
-          def(this, "types", function() {
-            return [ "Bike", "Car" ];
           });
         });
         
@@ -71,27 +69,27 @@ Screw.Unit(function() {
         expect(vehicle.speed).to(equal, 20);
       });
       
-      it("should create class methods", function() {
-        expect(Vehicle.types()).to(equal, [ "Bike", "Car" ]);
+      it("should be scoped to the class instance", function() {
+        expect(vehicle.types).to(equal, [ "Bike", "Car" ]);
       });
       
       describe("with a superclass", function() {
         var car;
         
         before(function() {
-          classify(Vehicle, "Car", function() {
-            def("fuelUp", function() {
+          classify(Vehicle, "Car", {
+            fuelUp : function() {
               this.hasFuel = true;
-            });
+            },
             
-            def("go", function(distance) {
+            go : function(distance) {
               if (this.hasFuel) {
                 return this.callSuper();
               }
               else {
                 return this.callSuper(0);
               }
-            });
+            }
           });
           
           car = new Car(4, 100);
@@ -282,6 +280,16 @@ Screw.Unit(function() {
         
         expect(MathClass.subtract(2, 2)).to(equal, 0);
       });
+      
+      it("should be scoped to the class object", function() {
+        classify("MathClass", function() {
+          extend(function() {
+            this.PI = 3.14;
+          });
+        });
+        
+        expect(MathClass.PI).to(equal, 3.14);
+      })
     });
     
     describe("used on classes", function() {
