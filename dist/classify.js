@@ -230,17 +230,15 @@ var buildClass = function(superclass) {
       && callsSuper(definition)) {
       
       return function() {
-        var args = arguments,
-            currentSuper = this.callSuper;
+        var definitionArgs = arguments,
+            currentSuper   = this.callSuper;
         
         this.callSuper = function() {
-          for (var i = 0, l = arguments.length; i < l; i++) {
-            args[i] = arguments[i];
-          }
-          return superclass[name].apply(this, args);
+          var superArgs = (arguments.length > 0) ? arguments : definitionArgs;
+          return superclass[name].apply(this, superArgs);
         };
         
-        var result = definition.apply(this, arguments);       
+        var result = definition.apply(this, definitionArgs);       
         this.callSuper = currentSuper;
         
         return result;

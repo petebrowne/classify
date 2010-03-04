@@ -78,6 +78,10 @@ Screw.Unit(function() {
         
         before(function() {
           classify(Vehicle, "Car", {
+            initialize : function(speed) {
+              this.callSuper(4, speed);
+            },
+            
             fuelUp : function() {
               this.hasFuel = true;
             },
@@ -92,7 +96,7 @@ Screw.Unit(function() {
             }
           });
           
-          car = new Car(4, 100);
+          car = new Car(100);
         })
       
         it("should create an instance of the parent class", function() {
@@ -108,6 +112,7 @@ Screw.Unit(function() {
         });
         
         it("should access superclass methods using #callSuper", function() {
+          expect(car.wheels).to(equal, 4);
           car.fuelUp();
           expect(car.go(500)).to(equal, 5);
         });
