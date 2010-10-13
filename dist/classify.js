@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.7.2
+//  Classify.js, version 0.8.0
 //
 //  Copyright (c) 2010, Peter Browne
 //
@@ -13,10 +13,10 @@
 //----------------------------------
 
 // The namespace where the methods keywords will be attached to
-var namespace = window,
+var namespace = this,
 
   // The current scope to define Classes, Modules, and Methods on.
-  currentScope = window,
+  currentScope = namespace,
   
   // The current Class to define Methods on.
   currentClass = null,
@@ -57,7 +57,7 @@ var namespace = window,
     var oldScope = currentScope;
     currentScope = object;
     
-    if (typeof methods === "function") {
+    if (typeof methods === 'function') {
       methods.call(object);
     }
     else {
@@ -76,8 +76,8 @@ var namespace = window,
       currentClass.superclass.prototype;
     
     if (superclass &&
-      typeof definition === "function" &&
-      typeof superclass[name] === "function" &&
+      typeof definition === 'function' &&
+      typeof superclass[name] === 'function' &&
       callsSuper(definition)) {
       
       return function() {
