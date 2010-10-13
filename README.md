@@ -12,6 +12,19 @@ Classify's syntax is inspired by [Foundation.js](http://github.com/grockit/june/
 * Full Inheritance, with access to the super method
 * Module Namespacing
 * Add Module methods to Classes, Objects, and globally
+    
+
+Node Support
+------------
+
+As of version 0.8.0, Classify works in [Node](http://nodejs.org/) and is available through [npm](http://github.com/isaacs/npm):
+
+    npm install classify
+
+To get each method in the global namespace:
+
+    var classify = require('classify');
+    for (var method in classify) { this[method] = classify[method]; }
 
 
 Using Classify
@@ -21,69 +34,69 @@ Using Classify
 
 To make a class use the `classify` method, which is available globally:
 
-    classify("Dog", function() {});
+    classify('Dog', function() {});
     
     var dog = new Dog();
 
 This will create a `Dog` class without any methods. To define new methods, use the `def` method:
 
-    classify("Dog", function() {
-      def("bark", function() {
-        return "ruff";
+    classify('Dog', function() {
+      def('bark', function() {
+        return 'ruff';
       });
       
-      def("fetch", function(object) {
+      def('fetch', function(object) {
         return object;
       });
     });
     
     var dog = new Dog();
-    dog.bark(); // "ruff"
-    dog.fetch("stick"); // "stick"
+    dog.bark(); // 'ruff'
+    dog.fetch('stick'); // 'stick'
   
-To define a constructor, define a method named "initialize":
+To define a constructor, define a method named `'initialize'`:
 
-    classify("Dog", function() {
-      def("initialize", function(name) {
+    classify('Dog', function() {
+      def('initialize', function(name) {
         this.name = name;
       });
     });
     
-    var dog = new Dog("Sparky");
-    alert(dog.name); // "Sparky"
+    var dog = new Dog('Sparky');
+    alert(dog.name); // 'Sparky'
   
 #### Inheritance
 
 To inherit from another class, just pass the class to the `classify` method:
 
-    classify("Animal", function() {
-      def("speak", function() {
-        return "Hello";
+    classify('Animal', function() {
+      def('speak', function() {
+        return 'Hello';
       });
     });
     
-    classify(Animal, "Dog", function() {
-      def("speak", function() {
-        return this.callSuper() + ", ruff";
+    classify(Animal, 'Dog', function() {
+      def('speak', function() {
+        return this.callSuper() + ', ruff';
       });
     });
     
     var animal = new Animal();
-    animal.speak(); // "Hello"
+    animal.speak(); // 'Hello'
     
     var dog = new Dog();
-    dog.speak(); // "Hello, ruff"
+    dog.speak(); // 'Hello, ruff'
   
 You have access to the super method by using `this.callSuper` within the method definition. The super method will automatically get the arguments from the method definition, but you can also override them if need be:
 
-    classify("Vehicle", function() {
-      def("go", function(distance) {
+    classify('Vehicle', function() {
+      def('go', function(distance) {
         return distance / this.speed;
       });
     });
     
-    classify(Vehicle, "Car", function() {
-      def("go", function(distance) {
+    classify(Vehicle, 'Car', function() {
+      def('go', function(distance) {
         if (this.hasFuel) {
           this.callSuper();
         }
@@ -103,30 +116,30 @@ You have access to the super method by using `this.callSuper` within the method 
 
 Classes can be reopened to add more methods or even to redefine methods:
 
-    classify("Dog", function() {
-      def("bark", function() {
-        return "ruff";
+    classify('Dog', function() {
+      def('bark', function() {
+        return 'ruff';
       });
     });
     
-    classify("Dog", function() {
-      def("bark", function() {
-        return "meow";
+    classify('Dog', function() {
+      def('bark', function() {
+        return 'meow';
       });
       
-      def("fetch", function(object) {
+      def('fetch', function(object) {
         return object;
       });
     });
     
     var dog = new Dog();
-    dog.bark(); // "meow"
-    dog.fetch("stick"); // "stick"
+    dog.bark(); // 'meow'
+    dog.fetch('stick'); // 'stick'
     
 Native classes can also be reopened:
 
-    classify("String", function() {
-      def("dasherize", function() {
+    classify('String', function() {
+      def('dasherize', function() {
         return this.replace(/_/g, '-');
       });
     });
@@ -135,17 +148,17 @@ Native classes can also be reopened:
 
 You define modules by using the `module` function:
 
-    module("Animals", function() {});
+    module('Animals', function() {});
     
 #### Namespaces
 
 You can use modules to namespace classes:
 
-    module("Animals", function() {
-      classify("Dog", function() {});
+    module('Animals', function() {
+      classify('Dog', function() {});
       
-      module("Felines", function() {
-        classify("Cat", function() {});
+      module('Felines', function() {
+        classify('Cat', function() {});
       });
     });
     
@@ -156,13 +169,13 @@ You can use modules to namespace classes:
 
 Methods defined on modules behave like class methods:
 
-    module("Inflector", function() {
-      def("dasherize", function(string) {
+    module('Inflector', function() {
+      def('dasherize', function(string) {
         return string.replace(/_/g, '-');
       });
     });
     
-    Inflector.dasherize("underscored_name"); // "underscored-name"
+    Inflector.dasherize('underscored_name'); // 'underscored-name'
     
 _Note: This is actually different than the Ruby Module implementation. This was done to keep the code very simple._
     
@@ -170,62 +183,62 @@ _Note: This is actually different than the Ruby Module implementation. This was 
 
 Modules methods can be included into classes:
 
-    module("Inflector", function() {
-      def("dasherize", function() {
+    module('Inflector', function() {
+      def('dasherize', function() {
         return this.replace(/_/g, '-');
       });
     });
     
-    classify("String", function() {
+    classify('String', function() {
       include(Inflector);
     });
     
     // or alternatively (if class is already defined):
-    // include("String", Inflector);
+    // include('String', Inflector);
     
-    var string = "underscored_name";
-    string.dasherize(); // "underscored-name"
+    var string = 'underscored_name';
+    string.dasherize(); // 'underscored-name'
     
 #### Extend
 
 Module methods can be added as class methods using `extend`:
 
-    module("Inflector", function() {
-      def("dasherize", function(string) {
+    module('Inflector', function() {
+      def('dasherize', function(string) {
         return string.replace(/_/g, '-');
       });
     });
     
-    classify("String", function() {
+    classify('String', function() {
       extend(Inflector);
     });
     
     // or alternatively (if class is already defined):
-    // extend("String", Inflector);
+    // extend('String', Inflector);
     
-    String.dasherize("underscored_name"); // "underscored-name"
+    String.dasherize('underscored_name'); // 'underscored-name'
     
 Class Methods can also be added using `extend`:
 
-    classify("String", function() {
+    classify('String', function() {
       extend(function() {
-        def("dasherize", function(string) {
+        def('dasherize', function(string) {
           return string.replace(/_/g, '-');
         });
       });
     });
     
-    String.dasherize("underscored_name"); // "underscored-name"
+    String.dasherize('underscored_name'); // 'underscored-name'
     
 ### Alias
 
 Methods can be aliased with other names using `alias`:
 
-    classify("String", function() {
-      alias("upcase", "toUpperCase");
+    classify('String', function() {
+      alias('upcase', 'toUpperCase');
     });
     
-    "upcase".upcase(); // "UPCASE";
+    'upcase'.upcase(); // 'UPCASE';
   
 
 Copyright
