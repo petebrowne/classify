@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.8.0
+//  Classify.js, version 0.8.1
 //
 //  Copyright (c) 2010, Peter Browne
 //
@@ -12,8 +12,11 @@
 //  Internal Properties
 //----------------------------------
 
-// The namespace where the methods keywords will be attached to
-var namespace = this,
+// The namespace where the methods keywords will be attached to.
+// This will be the window in the context of the browser or exports Node.
+var namespace = (typeof window !== 'undefined' && window) ||
+                (typeof exports !== 'undefined' && exports) ||
+                this,
 
   // The current scope to define Classes, Modules, and Methods on.
   currentScope = namespace,
