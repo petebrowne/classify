@@ -4,22 +4,22 @@ Screw.Unit(function() {
   //  #def
   //----------------------------------
   
-  describe("#def", function() {
-    var WORKING = "working",
+  describe('#def', function() {
+    var WORKING = 'working',
       testMethod = function() { return WORKING; };
     
-    describe("used globally", function() {
-      it("should define a global method", function() {
-        def("globalMethod", testMethod);
+    describe('used globally', function() {
+      it('should define a global method', function() {
+        def('globalMethod', testMethod);
         
         expect(globalMethod()).to(equal, WORKING);
       });
     });
     
-    describe("on a given object", function() {
-      it("should define a method on the object", function() {
+    describe('on a given object', function() {
+      it('should define a method on the object', function() {
         var object = {};
-        def(object, "method", testMethod);
+        def(object, 'method', testMethod);
         
         expect(object.method()).to(equal, WORKING);
       });
@@ -30,24 +30,24 @@ Screw.Unit(function() {
   //  #classify
   //----------------------------------
   
-  describe("#classify", function() {
-    describe("creating a class", function() {
+  describe('#classify', function() {
+    describe('creating a class', function() {
       var vehicle;
       
       before(function() {
-        classify("Vehicle", function() {
-          this.types = [ "Bike", "Car" ];
+        classify('Vehicle', function() {
+          this.types = [ 'Bike', 'Car' ];
           
-          def("initialize", function(wheels, speed) {
+          def('initialize', function(wheels, speed) {
             this.wheels = wheels;
             this.speed  = speed;
           });
           
-          def("go", function(distance) {
+          def('go', function(distance) {
             return distance / this.speed;
           });
           
-          def("accelerate", function(speed) {
+          def('accelerate', function(speed) {
             this.speed += speed;
             return this.speed;
           });
@@ -56,28 +56,28 @@ Screw.Unit(function() {
         vehicle = new Vehicle(2, 10);
       });
       
-      it("should create an instance of the class", function() {
+      it('should create an instance of the class', function() {
         expect(vehicle instanceof Vehicle).to(be_true);
       });
       
-      it("should create a class with an initializer", function() {
+      it('should create a class with an initializer', function() {
         expect(vehicle.wheels).to(equal, 2);
       });
       
-      it("should create methods on the prototype", function() {
+      it('should create methods on the prototype', function() {
         vehicle.accelerate(10);
         expect(vehicle.speed).to(equal, 20);
       });
       
-      it("should be scoped to the class instance", function() {
-        expect(vehicle.types).to(equal, [ "Bike", "Car" ]);
+      it('should be scoped to the class instance', function() {
+        expect(vehicle.types).to(equal, [ 'Bike', 'Car' ]);
       });
       
-      describe("with a superclass", function() {
+      describe('with a superclass', function() {
         var car;
         
         before(function() {
-          classify(Vehicle, "Car", {
+          classify(Vehicle, 'Car', {
             initialize : function(speed) {
               this.callSuper(4, speed);
             },
@@ -99,68 +99,68 @@ Screw.Unit(function() {
           car = new Car(100);
         })
       
-        it("should create an instance of the parent class", function() {
+        it('should create an instance of the parent class', function() {
           expect(car instanceof Vehicle).to(be_true);
         });
       
-        it("should create an instance of the class", function() {
+        it('should create an instance of the class', function() {
           expect(car instanceof Car).to(be_true);
         });
         
-        it("should inherit methods from the superclass", function() {
+        it('should inherit methods from the superclass', function() {
           expect(car.accelerate(50)).to(equal, 150);
         });
         
-        it("should access superclass methods using #callSuper", function() {
+        it('should access superclass methods using #callSuper', function() {
           expect(car.wheels).to(equal, 4);
           car.fuelUp();
           expect(car.go(500)).to(equal, 5);
         });
         
-        it("should allow override of default parameters when using #callSuper", function() {
+        it('should allow override of default parameters when using #callSuper', function() {
           expect(car.hasFuel).to(be_false);
           expect(car.go(500)).to(equal, 0);
         });
       });
     });
       
-    describe("reopening a class", function() {
+    describe('reopening a class', function() {
       var dog;
       
       before(function() {
-        classify("Dog", function() {
-          def("bark", function() {
-            return "ruff";
+        classify('Dog', function() {
+          def('bark', function() {
+            return 'ruff';
           });
         });
         
-        classify("Dog", function() {
-          def("fetch", function() {
-            return "stick";
+        classify('Dog', function() {
+          def('fetch', function() {
+            return 'stick';
           });
         });
         
         dog = new Dog();
       });
       
-      it("should retain original methods", function() {
-        expect(dog.bark()).to(equal, "ruff");
+      it('should retain original methods', function() {
+        expect(dog.bark()).to(equal, 'ruff');
       });
       
-      it("should add new methods", function() {
-        expect(dog.fetch()).to(equal, "stick");
+      it('should add new methods', function() {
+        expect(dog.fetch()).to(equal, 'stick');
       });
     });
     
-    describe("extending a native class", function() {
-      it("should add new methods", function() {
-        classify("String", function() {
-          def("include", function(pattern) {
+    describe('extending a native class', function() {
+      it('should add new methods', function() {
+        classify('String', function() {
+          def('include', function(pattern) {
             return this.indexOf(pattern) > -1;
           });
         });
         
-        expect(("testing").include("test")).to(be_true);
+        expect(('testing').include('test')).to(be_true);
       });
     });
   });
@@ -169,43 +169,43 @@ Screw.Unit(function() {
   //  #module
   //----------------------------------
   
-  describe("#module", function() {
-    describe("used as a namespace", function() {
+  describe('#module', function() {
+    describe('used as a namespace', function() {
       before(function() {
-        module("UI", function() {
-          classify("Tabs", function() {
-            def("initialize", function(selector) {
+        module('UI', function() {
+          classify('Tabs', function() {
+            def('initialize', function(selector) {
               this.selector = selector;
             });
           });
           
-          module("Elements", function() {
-            def("build", function(element) {
+          module('Elements', function() {
+            def('build', function(element) {
               return element;
             });
           });
         });
       });
       
-      it("should namespace classes", function() {
-        expect(new UI.Tabs(".tabs").selector).to(equal, ".tabs");
+      it('should namespace classes', function() {
+        expect(new UI.Tabs('.tabs').selector).to(equal, '.tabs');
       });
       
-      it("should namespace other modules", function() {
-        expect(UI.Elements.build("something")).to(equal, "something");
+      it('should namespace other modules', function() {
+        expect(UI.Elements.build('something')).to(equal, 'something');
       });
     });
     
-    describe("a module with methods", function() {
+    describe('a module with methods', function() {
       before(function() {
-        module("Algebra", function() {
-          def("add", function(start, value) {
+        module('Algebra', function() {
+          def('add', function(start, value) {
             return start + value;
           });
         });
       });
       
-      it("should be able to call the methods through the namespace", function() {
+      it('should be able to call the methods through the namespace', function() {
         expect(Algebra.add(2, 2)).to(equal, 4);
       });
     });
@@ -215,25 +215,25 @@ Screw.Unit(function() {
   //  #include
   //----------------------------------
   
-  describe("#include", function() {
+  describe('#include', function() {
     before(function() {
-      module("Algebra", function() {
-        def("add", function(start, value) {
+      module('Algebra', function() {
+        def('add', function(start, value) {
           return start + value;
         });
       });
     });
     
-    describe("used globally", function() {
-      it("should make module methods available globally", function() {
+    describe('used globally', function() {
+      it('should make module methods available globally', function() {
         include(Algebra);
         expect(add(2, 2)).to(equal, 4);
       });
     });
     
-    describe("used within #classify", function() {
-      it("should make module methods available to classes", function() {
-        classify("MathClass", function() {
+    describe('used within #classify', function() {
+      it('should make module methods available to classes', function() {
+        classify('MathClass', function() {
           include(Algebra);
         });
         
@@ -241,15 +241,15 @@ Screw.Unit(function() {
       });
     });
     
-    describe("used on classes", function() {
-      it("should add the methods to the prototype", function() {
-        include("String", {
+    describe('used on classes', function() {
+      it('should add the methods to the prototype', function() {
+        include('String', {
           include : function(pattern) {
             return this.indexOf(pattern) > -1;
           }
         });
           
-        expect(("testing").include("test")).to(be_true);
+        expect(('testing').include('test')).to(be_true);
       });
     });
   });
@@ -258,26 +258,26 @@ Screw.Unit(function() {
   //  #extend
   //----------------------------------
   
-  describe("#extend", function() {
-    describe("used within #classify", function() {
-      it("should add class methods to a class", function() {
-        module("Algebra", function() {
-          def("add", function(start, value) {
+  describe('#extend', function() {
+    describe('used within #classify', function() {
+      it('should add class methods to a class', function() {
+        module('Algebra', function() {
+          def('add', function(start, value) {
             return start + value;
           });
         });
         
-        classify("MathClass", function() {
+        classify('MathClass', function() {
           extend(Algebra);
         });
         
         expect(MathClass.add(2, 2)).to(equal, 4);
       });
       
-      it("should be able to add class methods with a function definition", function() {
-        classify("MathClass", function() {
+      it('should be able to add class methods with a function definition', function() {
+        classify('MathClass', function() {
           extend(function() {
-            def("subtract", function(start, value) {
+            def('subtract', function(start, value) {
               return start - value;
             });
           });
@@ -286,26 +286,26 @@ Screw.Unit(function() {
         expect(MathClass.subtract(2, 2)).to(equal, 0);
       });
       
-      it("should be scoped to the class object", function() {
-        classify("MathClass", function() {
+      it('should be scoped to the class object', function() {
+        classify('MathClass', function() {
           extend(function() {
             this.PI = 3.14;
           });
         });
         
         expect(MathClass.PI).to(equal, 3.14);
-      })
+      });
     });
     
-    describe("used on classes", function() {
-      it("should add the methods as class methods", function() {
-        extend("String", {
+    describe('used on classes', function() {
+      it('should add the methods as class methods', function() {
+        extend('String', {
           include : function(string, pattern) {
             return string.indexOf(pattern) > -1;
           }
         });
           
-        expect(String.include("testing", "test")).to(be_true);
+        expect(String.include('testing', 'test')).to(be_true);
       });
     });
   });
@@ -314,16 +314,16 @@ Screw.Unit(function() {
   //  #alias
   //----------------------------------
   
-  describe("#alias", function() {
-    it("should create an alias for the given method", function() {
-      classify("Dog", function() {
-        def("bark", function() {
-          return "ruff";
+  describe('#alias', function() {
+    it('should create an alias for the given method', function() {
+      classify('Dog', function() {
+        def('bark', function() {
+          return 'ruff';
         });
-        alias("speak", "bark");
+        alias('speak', 'bark');
       });
       
-      expect(new Dog().speak()).to(equal, "ruff");
+      expect(new Dog().speak()).to(equal, 'ruff');
     });
   });
   
