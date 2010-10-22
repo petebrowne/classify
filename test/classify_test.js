@@ -36,6 +36,16 @@ Screw.Unit(function() {
       
       before(function() {
         classify('Vehicle', function() {
+          extend(function() {
+            def('manufacture', function(number, wheels, speed) {
+              var vehicles = [];
+              for (var i = 0; i < number; i++) {
+                vehicles.push(new this(wheels, speed));
+              }
+              return vehicles;
+            });
+          });
+          
           this.types = [ 'Bike', 'Car' ];
           
           def('initialize', function(wheels, speed) {
@@ -71,6 +81,12 @@ Screw.Unit(function() {
       
       it('should be scoped to the class instance', function() {
         expect(vehicle.types).to(equal, [ 'Bike', 'Car' ]);
+      });
+      
+      it('should create class methods using #extend', function() {
+        var vehicles = Vehicle.manufacture(10, 2, 10);
+        expect(vehicles.length).to(equal, 10);
+        expect(vehicles[0].wheels).to(equal, 2);
       });
       
       describe('with a superclass', function() {
@@ -120,6 +136,12 @@ Screw.Unit(function() {
         it('should allow override of default parameters when using #callSuper', function() {
           expect(car.hasFuel).to(be_false);
           expect(car.go(500)).to(equal, 0);
+        });
+        
+        it('should inherit class methods', function() {
+          var cars = Car.manufacture(10, 100);
+          expect(cars.length).to(equal, 10);
+          expect(cars[0].speed).to(equal, 100);
         });
       });
     });
