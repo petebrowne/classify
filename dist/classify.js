@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.9.0
+//  Classify.js, version 0.9.1
 //
 //  Copyright (c) 2010, Peter Browne
 //
@@ -238,7 +238,7 @@ namespace.include = function(moduleOrName, module) {
  * Module methods. The methods wil be available as Class methods.
  */
 namespace.extend = function(nameOrModule, module) {
-  var object, name;
+  var object;
   
   if (module === undefined) {
     if (currentClass !== null) {
@@ -246,9 +246,11 @@ namespace.extend = function(nameOrModule, module) {
       object = currentClass;
     }
   }
+  else if (typeof nameOrModule === 'string') {
+    object = currentScope[nameOrModule];
+  }
   else {
-    name   = nameOrModule;
-    object = currentScope[name];
+    object = nameOrModule;
   }
   
   addMethods(object, module);

@@ -330,6 +330,20 @@ Screw.Unit(function() {
         expect(String.include('testing', 'test')).to(be_true);
       });
     });
+    
+    describe('used on objects', function() {
+      it('should add the methods', function() {
+        var object = {};
+        
+        extend(object, {
+          testing : function() {
+            return 'working';
+          }
+        });
+          
+        expect(object.testing()).to(equal, 'working');
+      });
+    });
   });
   
   //----------------------------------
