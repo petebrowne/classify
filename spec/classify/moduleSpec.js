@@ -21,6 +21,10 @@ describe('#module', function() {
     it('namespaces other modules', function() {
       expect(UI.Elements.build('something')).toEqual('something');
     });
+    
+    it('changes .toString() to return the name of the Class', function() {
+      expect(UI.toString()).toEqual('UI');
+    });
   });
   
   describe('with methods', function() {

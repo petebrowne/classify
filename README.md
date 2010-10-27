@@ -122,7 +122,7 @@ Classes can be reopened to add more methods or even to redefine methods:
       });
     });
     
-    classify('Dog', function() {
+    classify(Dog, function() {
       def('bark', function() {
         return 'meow';
       });
@@ -138,7 +138,7 @@ Classes can be reopened to add more methods or even to redefine methods:
     
 Native classes can also be reopened:
 
-    classify('String', function() {
+    classify(String, function() {
       def('dasherize', function() {
         return this.replace(/_/g, '-');
       });
@@ -177,7 +177,7 @@ Methods defined on modules behave like class methods:
     
     Inflector.dasherize('underscored_name'); // 'underscored-name'
     
-_Note: This is actually different than the Ruby Module implementation. This was done to keep the code very simple._
+_Note: This is actually different than the Ruby Module implementation. This was done to simplify the code._
     
 #### Include
 
@@ -189,12 +189,12 @@ Modules methods can be included into classes:
       });
     });
     
-    classify('String', function() {
+    classify(String, function() {
       include(Inflector);
     });
     
     // or alternatively (if class is already defined):
-    // include('String', Inflector);
+    // include(String, Inflector);
     
     var string = 'underscored_name';
     string.dasherize(); // 'underscored-name'
@@ -209,18 +209,18 @@ Module methods can be added as class methods using `extend`:
       });
     });
     
-    classify('String', function() {
+    classify(String, function() {
       extend(Inflector);
     });
     
     // or alternatively (if class is already defined):
-    // extend('String', Inflector);
+    // extend(String, Inflector);
     
     String.dasherize('underscored_name'); // 'underscored-name'
     
 Class Methods can also be added using `extend`:
 
-    classify('String', function() {
+    classify(String, function() {
       extend(function() {
         def('dasherize', function(string) {
           return string.replace(/_/g, '-');
@@ -234,7 +234,7 @@ Class Methods can also be added using `extend`:
 
 Methods can be aliased with other names using `alias`:
 
-    classify('String', function() {
+    classify(String, function() {
       alias('upcase', 'toUpperCase');
     });
     

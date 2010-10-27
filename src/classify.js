@@ -32,14 +32,14 @@
   //----------------------------------
     
   // Builds a new Class, with optional inheritance.
-  var buildClass = function(superclass) {
+  var buildClass = function(name, superclass) {
     var newClass = function() {
       if (!inheriting && typeof this.initialize !== 'undefined') {
         this.initialize.apply(this, arguments);
       }
     };
     
-    if (superclass) {
+    if (superclass != null) {
       inheriting = true;
       newClass.prototype = new superclass();
       for (var method in superclass) {
@@ -52,6 +52,7 @@
     
     newClass.superclass  = superclass;
     newClass.constructor = newClass;
+    newClass.toString    = function() { return name; };
     
     return newClass;
   };
@@ -78,23 +79,18 @@
   };
   
   // If necessary add a `callSuper` method to access the superclass's method.
-  var addSuperMethod = function(name, definition) {
-    var superclass = currentClass !== null &&
-      typeof currentClass.superclass !== 'undefined' &&
-      currentClass.superclass.prototype;
-    
-    if (superclass &&
-      typeof definition === 'function' &&
-      typeof superclass[name] === 'function' &&
-      callsSuper(definition)) {
-      
+  var addCallSuper = function(definition, superDefinition) {
+    if (typeof superDefinition === 'function' &&
+        typeof definition === 'function' &&
+        callsSuper(definition)) {
+          
       return function() {
         var definitionArgs = arguments,
             currentSuper   = this.callSuper;
         
         this.callSuper = function() {
           var superArgs = (arguments.length > 0) ? arguments : definitionArgs;
-          return superclass[name].apply(this, superArgs);
+          return superDefinition.apply(this, superArgs);
         };
         
         var result = definition.apply(this, definitionArgs);       
@@ -124,33 +120,31 @@
   // Creates a new Class. The Class will be defined on the _current scope_, which will
   // be either the `window` or a Module. Optionally you can pass in a Superclass as the first argument.
   namespace.classify = function() {
-    var name, definition, superclass, klass;
+    var object, definition, superclass;
     
     if (arguments.length === 3) {
       superclass = arguments[0];
-      name       = arguments[1];
+      object     = arguments[1];
       definition = arguments[2];
     }
     else {
-      name       = arguments[0];
+      object     = arguments[0];
       definition = arguments[1];
     }
     
-    if (typeof name === 'string') {
-      if (typeof currentScope[name] === 'undefined') {
-        currentScope[name] = buildClass(superclass);
+    if (typeof object === 'string') {
+      if (typeof currentScope[object] === 'undefined') {
+        currentScope[object] = buildClass(object, superclass);
       }
-      klass = currentScope[name];
-    }
-    else {
-      klass = name;
+      object = currentScope[object];
     }
     
-    currentClass = klass;
-    addMethods(klass.prototype, definition);
-    currentClass = null;
+    var oldClass = currentClass;
+    currentClass = object.prototype;
+    addMethods(object, definition);
+    currentClass = oldClass;
     
-    return klass;
+    return object;
   };
   
   // Defines a new method. The method will be defined on the _current scope_, which will
@@ -166,12 +160,12 @@
       definition = arguments[2];
     }
     else {
-      object     = currentScope;
+      object     = currentClass || currentScope;
       name       = arguments[0];
       definition = arguments[1];
     }
-    
-    definition   = addSuperMethod(name, definition);
+
+    definition   = addCallSuper(definition, object[name]);
     object[name] = definition;
     
     return object[name];
@@ -183,11 +177,12 @@
   namespace.module = function(name, definition) {
     if (typeof currentScope[name] === 'undefined') {
       currentScope[name] = {};
+      currentScope[name].toString = function() { return name; };
     }
     
     addMethods(currentScope[name], definition);
     
-    return definition;
+    return currentScope[name];
   };
   
   // Includes the given Module methods into either the current Class or, optionally, the
@@ -208,37 +203,22 @@
       definition = arguments[0];
     }
     
-    if (typeof object.prototype !== 'undefined') {
-      object = object.prototype;
-    }
-    
     addMethods(object, definition);
   };
   
   // Extends the current Class or, optionally, the given Class Definition with the given
   // Module methods. The methods wil be available as Class methods.
   namespace.extend = function() {
-    var object, definition;
-    
-    if (arguments.length === 2) {
-      object     = arguments[0];
-      definition = arguments[1];
-      
-      if (typeof object === 'string') {
-        object = currentScope[object];
-      }
-    }
-    else {
-      object     = currentClass || currentScope;
-      definition = arguments[0];
-    }
-    
-    addMethods(object, definition);
+    var oldClass = currentClass;
+    currentClass = null;
+    namespace.include.apply(this, arguments);
+    currentClass = oldClass;
   };
   
   // Creates a alias for the given Method, Class, or Module definition.
   namespace.alias = function(alias, method) {
-    currentScope[alias] = currentScope[method];
+    var object = currentClass || currentScope;
+    object[alias] = object[method];
   };
 
 })();

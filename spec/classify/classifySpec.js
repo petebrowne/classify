@@ -46,14 +46,18 @@ describe('#classify', function() {
       expect(vehicle.speed).toEqual(20);
     });
     
-    it('scopes the Class definition to the Class instance', function() {
-      expect(vehicle.types).toEqual([ 'Bike', 'Car' ]);
+    it('scopes the Class definition to the Class', function() {
+      expect(Vehicle.types).toEqual([ 'Bike', 'Car' ]);
     });
     
     it('adds Class methods using #extend', function() {
       var vehicles = Vehicle.manufacture(10, 2, 10);
       expect(vehicles.length).toEqual(10);
       expect(vehicles[0].wheels).toEqual(2);
+    });
+    
+    it('changes .toString() to return the name of the Class', function() {
+      expect(Vehicle.toString()).toEqual('Vehicle');
     });
     
     describe('with a superclass', function() {
