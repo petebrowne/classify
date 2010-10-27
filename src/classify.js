@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.9.1
+//  Classify.js, version 0.10.0
 //
 //  Copyright (c) 2010, Peter Browne
 //
