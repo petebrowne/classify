@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Classify Spec</title>
+  <link rel="stylesheet" type="text/css" href="../vendor/jasmine-1.0.1/jasmine.css">
+  <script type="text/javascript" src="../vendor/jasmine-1.0.1/jasmine.js"></script>
+  <script type="text/javascript" src="../vendor/jasmine-1.0.1/jasmine-html.js"></script>
+
+  <!-- include source files here... -->
+  <script type="text/javascript" src="../src/classify.js"></script>
+
+  <!-- include support files here... -->
+  <script type="text/javascript" src="support/matchers.js"></script>
+
+  <!-- include spec files here... -->
+  <script type="text/javascript" src="classify/defSpec.js"></script>
+  <script type="text/javascript" src="classify/classifySpec.js"></script>
+  <script type="text/javascript" src="classify/moduleSpec.js"></script>
+  <script type="text/javascript" src="classify/includeSpec.js"></script>
+  <script type="text/javascript" src="classify/extendSpec.js"></script>
+  <script type="text/javascript" src="classify/aliasSpec.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+  jasmine.getEnv().execute();
+</script>
+
+</body>
+</html>
