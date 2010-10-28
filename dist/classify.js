@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.10.0
+//  Classify.js, version 0.10.1
 //  Copyright (c) 2010, Peter Browne
 //
 //--------------------------------------------------------------------------
@@ -32,7 +32,7 @@
     
   // Builds a new Class, with optional inheritance.
   var buildClass = function(name, superclass) {
-    var newClass = function() {
+    var Class = function() {
       if (!inheriting && typeof this.initialize !== 'undefined') {
         this.initialize.apply(this, arguments);
       }
@@ -40,20 +40,20 @@
     
     if (superclass != null) {
       inheriting = true;
-      newClass.prototype = new superclass();
+      Class.prototype = new superclass();
       for (var method in superclass) {
         if (!isKeywordProperty(method)) {
-          namespace.def(newClass, method, superclass[method]);
+          namespace.def(Class, method, superclass[method]);
         }
       }
       inheriting = false;
     }
     
-    newClass.superclass  = superclass;
-    newClass.constructor = newClass;
-    newClass.toString    = function() { return name; };
+    Class.superclass = superclass;
+    Class.prototype.constructor = Class;
+    Class.toString = function() { return name; };
     
-    return newClass;
+    return Class;
   };
   
   // Add the given methods to the object.
@@ -109,7 +109,7 @@
   
   // Test to see if the given property is a keyword that shouldn't be added.
   var isKeywordProperty = function(method) {
-    return (/\b(prototype|superclass|constructor)\b/).test(method);
+    return (/\b(prototype|superclass)\b/).test(method);
   };
     
   //----------------------------------

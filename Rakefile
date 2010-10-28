@@ -1,6 +1,6 @@
 require 'packr'
 
-version = '0.10.0'
+version = '0.10.1'
 
 desc 'Builds the distribution'
 task :dist do
@@ -24,13 +24,25 @@ task :dist do
 end
 task :default => :dist
 
-desc 'Tags and releases the current version'
-task :release do
+def guard_clean
   if %x(git ls-files -dm).split("\n").size.zero?
-    %x(git tag -am 'Version #{version}' v#{version})
-    %x(git push --tags --quiet)
-    %x(npm publish .)
+    yield
   else
     puts 'Commit your changes first...'
+  end
+end
+
+desc 'Tags and releases the current version'
+task :release do
+  guard_clean do
+    %x(git tag -am 'Version #{version}' v#{version})
+    %x(git push --tags --quiet)
+  end
+end
+
+desc 'Publishes the current version on npm'
+task :publish do
+  guard_clean do
+    %x(npm publish .)
   end
 end

@@ -36,6 +36,10 @@ describe('#classify', function() {
     it('creates an instance of the Class', function() {
       expect(vehicle).toBeAnInstanceOf(Vehicle);
     });
+      
+    it('sets the constructor property to the class', function() {
+      expect(vehicle.constructor).toBe(Vehicle);
+    });
     
     it('creates a class with an initializer', function() {
       expect(vehicle.wheels).toEqual(2);
@@ -91,6 +95,10 @@ describe('#classify', function() {
     
       it('creates an instance of the class', function() {
         expect(car).toBeAnInstanceOf(Car);
+      });
+      
+      it('sets the constructor property to the class', function() {
+        expect(car.constructor).toBe(Car);
       });
       
       it('inherits methods from the superclass', function() {
