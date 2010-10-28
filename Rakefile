@@ -1,20 +1,36 @@
-require 'rake'
 require 'packr'
+
+version = '0.10.0'
 
 desc 'Builds the distribution'
 task :dist do
-  src_dir  = File.expand_path('../src', __FILE__)
-  dist_dir = File.expand_path('../dist', __FILE__)
+  source = File.read 'src/classify.js'
+  source.sub!(Regexp.new(Regexp.escape('{{ version }}')), "version #{version}")
   
-  source = File.read File.join(src_dir, 'classify.js')
+  package = File.read 'package.json'
+  package.sub!(/("version"\s*:\s*")([\w\.]+)/, '\1' + version)
   
-  File.open(File.join(dist_dir, 'classify.js'), 'w') do |file|
-    file.write source.strip
+  File.open('package.json', 'w') do |file|
+    file.write package
   end
   
-  File.open(File.join(dist_dir, 'classify.min.js'), 'w') do |file|
+  File.open('dist/classify.js', 'w') do |file|
+    file.write source
+  end
+  
+  File.open('dist/classify.min.js', 'w') do |file|
     file.write Packr.pack(source, :shrink_vars => true).strip
   end
 end
-
 task :default => :dist
+
+desc 'Tags and releases the current version'
+task :release do
+  if %x(git ls-files -dm).split("\n").size.zero?
+    %x(git tag -am 'Version #{version}' v#{version})
+    %x(git push --tags --quiet)
+    %x(npm publish .)
+  else
+    puts 'Commit your changes first...'
+  end
+end
