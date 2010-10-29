@@ -121,6 +121,10 @@ describe('#classify', function() {
         expect(cars.length).toEqual(10);
         expect(cars[0].speed).toEqual(100);
       });
+      
+      it('does not inerit class properties', function() {
+        expect(Car.types).toBeUndefined();
+      });
     });
   });
     
