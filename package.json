@@ -1,6 +1,6 @@
 {
   "name"          : "classify",
-  "version"       : "0.10.1",
+  "version"       : "0.10.2",
   "description"   : "A Ruby-like Module & Class Inheritance Library for Javascript",
   "url"           : "http://github.com/petebrowne/classify",
   "keywords"      : [ "class", "inheritance", "module", "client", "browser" ],

@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.10.1
+//  Classify.js, version 0.10.2
 //  Copyright (c) 2010, Peter Browne
 //
 //--------------------------------------------------------------------------
@@ -42,7 +42,7 @@
       inheriting = true;
       Class.prototype = new superclass();
       for (var method in superclass) {
-        if (!isKeywordProperty(method)) {
+        if(typeof superclass[method] === 'function') {
           namespace.def(Class, method, superclass[method]);
         }
       }
@@ -105,11 +105,6 @@
   // Test to see if a function contains a call to `callSuper`
   var callsSuper = function(method) {
     return (/\bcallSuper\b/).test(method.toString());
-  };
-  
-  // Test to see if the given property is a keyword that shouldn't be added.
-  var isKeywordProperty = function(method) {
-    return (/\b(prototype|superclass)\b/).test(method);
   };
     
   //----------------------------------
