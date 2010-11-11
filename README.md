@@ -12,19 +12,6 @@ Classify's syntax is inspired by [Foundation.js](http://github.com/grockit/june/
 * Full Inheritance, with access to the super method
 * Module Namespacing
 * Add Module methods to Classes, Objects, and globally
-    
-
-Node Support
-------------
-
-As of version 0.8.0, Classify works in [Node](http://nodejs.org/) and is available through [npm](http://github.com/isaacs/npm):
-
-    npm install classify
-
-To get each method in the global namespace:
-
-    var classify = require('classify');
-    for (var method in classify) { this[method] = classify[method]; }
 
 
 Using Classify

@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.10.2
+//  Classify.js, version 0.10.3
 //  Copyright (c) 2010, Peter Browne
 //
 //--------------------------------------------------------------------------
@@ -11,11 +11,8 @@
   //  Internal Properties
   //----------------------------------
   
-  // The namespace where the methods keywords will be attached to.
-  // This will be the window in the context of the browser or exports in Node.
-  var namespace = (typeof window !== 'undefined' && window) ||
-                  (typeof exports !== 'undefined' && exports) ||
-                  this;
+  // The namespace where the keyword methods will be attached to.
+  var namespace = (typeof window !== 'undefined' && window) || this;
   
   // The current scope to define Classes, Modules, and Methods on.
   var currentScope = namespace;
@@ -42,7 +39,7 @@
       inheriting = true;
       Class.prototype = new superclass();
       for (var method in superclass) {
-        if(typeof superclass[method] === 'function') {
+        if (typeof superclass[method] === 'function') {
           namespace.def(Class, method, superclass[method]);
         }
       }

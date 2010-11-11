@@ -1,9 +1,0 @@
-{
-  "name"          : "classify",
-  "version"       : "0.10.2",
-  "description"   : "A Ruby-like Module & Class Inheritance Library for Javascript",
-  "url"           : "http://github.com/petebrowne/classify",
-  "keywords"      : [ "class", "inheritance", "module", "client", "browser" ],
-  "author"        : "Pete Browne <me@petebrowne.com> (http://petebrowne.com)",
-  "main"          : "./dist/classify"
-}
