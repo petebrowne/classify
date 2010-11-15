@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.10.3
+//  Classify.js, version 0.10.4
 //  Copyright (c) 2010, Peter Browne
 //
 //--------------------------------------------------------------------------
@@ -15,7 +15,7 @@
   var namespace = (typeof window !== 'undefined' && window) || this;
   
   // The current scope to define Classes, Modules, and Methods on.
-  var currentScope = namespace;
+  var currentObject = namespace;
   
   // The current Class to define Methods on.
   var currentClass = null;
@@ -54,24 +54,28 @@
   };
   
   // Add the given methods to the object.
-  var addMethods = function(object, methods) {
-    if (object == null || methods == null) {
+  var addDefinition = function(withClass, withObject, definition) {
+    if (withObject == null || definition == null) {
       return;
     }
     
-    var oldScope = currentScope;
-    currentScope = object;
+    var oldClass  = currentClass;
+    var oldObject = currentObject;
     
-    if (typeof methods === 'function') {
-      methods.call(object);
+    currentClass  = withClass;
+    currentObject = withObject;
+    
+    if (typeof definition === 'function') {
+      definition.call(withObject);
     }
     else {
-      for (var name in methods) {
-        namespace.def(name, methods[name]);
+      for (var name in definition) {
+        namespace.def(name, definition[name]);
       }
     }
     
-    currentScope = oldScope;
+    currentClass  = oldClass;
+    currentObject = oldObject;
   };
   
   // If necessary add a `callSuper` method to access the superclass's method.
@@ -81,8 +85,8 @@
         callsSuper(definition)) {
           
       return function() {
-        var definitionArgs = arguments,
-            currentSuper   = this.callSuper;
+        var definitionArgs = arguments;
+        var currentSuper   = this.callSuper;
         
         this.callSuper = function() {
           var superArgs = (arguments.length > 0) ? arguments : definitionArgs;
@@ -110,30 +114,21 @@
   
   // Creates a new Class. The Class will be defined on the _current scope_, which will
   // be either the `window` or a Module. Optionally you can pass in a Superclass as the first argument.
-  namespace.classify = function() {
-    var object, definition, superclass;
-    
-    if (arguments.length === 3) {
-      superclass = arguments[0];
-      object     = arguments[1];
-      definition = arguments[2];
-    }
-    else {
-      object     = arguments[0];
-      definition = arguments[1];
+  namespace.classify = function(superclass, object, definition) {
+    if (typeof definition === 'undefined') {
+      definition = object;
+      object     = superclass;
+      superclass = null;
     }
     
     if (typeof object === 'string') {
-      if (typeof currentScope[object] === 'undefined') {
-        currentScope[object] = buildClass(object, superclass);
+      if (typeof currentObject[object] === 'undefined') {
+        currentObject[object] = buildClass(object, superclass);
       }
-      object = currentScope[object];
+      object = currentObject[object];
     }
     
-    var oldClass = currentClass;
-    currentClass = object.prototype;
-    addMethods(object, definition);
-    currentClass = oldClass;
+    addDefinition(object.prototype, object, definition);
     
     return object;
   };
@@ -142,22 +137,14 @@
   // be either the `window`, a Class, or Module. Within the method definition, `this` will
   // refer to the _current scope_. Optionally, you can set the object to define the method on as the
   // first argument.
-  namespace.def = function() {
-    var object, name, definition;
-    
-    if (arguments.length === 3) {
-      object     = arguments[0];
-      name       = arguments[1];
-      definition = arguments[2];
-    }
-    else {
-      object     = currentClass || currentScope;
-      name       = arguments[0];
-      definition = arguments[1];
+  namespace.def = function(object, name, definition) {
+    if (typeof definition === 'undefined') {
+      definition = name;
+      name       = object;
+      object     = currentClass || currentObject;
     }
 
-    definition   = addCallSuper(definition, object[name]);
-    object[name] = definition;
+    object[name] = addCallSuper(definition, object[name]);
     
     return object[name];
   };
@@ -166,49 +153,48 @@
   // and Classes. They can also be used as a collection of method definitions
   // to be included into other Classes.
   namespace.module = function(name, definition) {
-    if (typeof currentScope[name] === 'undefined') {
-      currentScope[name] = {};
-      currentScope[name].toString = function() { return name; };
+    if (typeof currentObject[name] === 'undefined') {
+      currentObject[name] = {};
+      currentObject[name].toString = function() { return name; };
     }
     
-    addMethods(currentScope[name], definition);
+    addDefinition(null, currentObject[name], definition);
     
-    return currentScope[name];
+    return currentObject[name];
   };
   
   // Includes the given Module methods into either the current Class or, optionally, the
   // given Class Definition. The included methods will be available on the instance of the Class.
-  namespace.include = function() {
-    var object, definition;
-    
-    if (arguments.length === 2) {
-      object     = arguments[0];
-      definition = arguments[1];
-      
-      if (typeof object === 'string') {
-        object = currentScope[object];
-      }
+  namespace.include = function(object, definition) {
+    if (typeof definition === 'undefined') {
+      definition = object;
+      object     = currentClass || currentObject;
     }
-    else {
-      object     = currentClass || currentScope;
-      definition = arguments[0];
+    else if (typeof object === 'string') {
+      object = currentObject[object];
     }
     
-    addMethods(object, definition);
+    addDefinition(currentClass, object, definition);
   };
   
   // Extends the current Class or, optionally, the given Class Definition with the given
   // Module methods. The methods wil be available as Class methods.
-  namespace.extend = function() {
-    var oldClass = currentClass;
-    currentClass = null;
-    namespace.include.apply(this, arguments);
-    currentClass = oldClass;
+  namespace.extend = function(object, definition) {
+    if (typeof definition === 'undefined') {
+      definition = object;
+      object     = currentObject;
+    }
+    else if (typeof object === 'string') {
+      object = currentObject[object];
+    }
+    
+    addDefinition(null, object, definition);
   };
   
   // Creates a alias for the given Method, Class, or Module definition.
   namespace.alias = function(alias, method) {
-    var object = currentClass || currentScope;
+    var object = currentClass || currentObject;
+    
     object[alias] = object[method];
   };
 

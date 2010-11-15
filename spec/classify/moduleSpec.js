@@ -22,7 +22,7 @@ describe('#module', function() {
       expect(UI.Elements.build('something')).toEqual('something');
     });
     
-    it('changes .toString() to return the name of the Class', function() {
+    it('changes .toString() to return the name of the class', function() {
       expect(UI.toString()).toEqual('UI');
     });
   });
@@ -36,6 +36,20 @@ describe('#module', function() {
     
     it('adds methods to the module', function() {
       expect(Algebra.add(2, 2)).toEqual(4);
+    });
+  });
+  
+  describe('within a class', function() {
+    it('creates a module on the class', function() {
+      classify('Something', function() {
+        module('Complex', function() {
+          def('isWorking', function() {
+            return true;
+          });
+        });
+      });
+      
+      expect(Something.Complex.isWorking()).toBe(true);
     });
   });
 });
