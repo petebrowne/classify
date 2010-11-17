@@ -25,6 +25,12 @@ describe('#module', function() {
     it('changes .toString() to return the name of the class', function() {
       expect(UI.toString()).toEqual('UI');
     });
+    
+    it('changes .toString() to return the full name of the class, including modules', function() {
+      expect(UI.Tabs.toString()).toEqual('UI.Tabs');
+      expect(UI.Elements.toString()).toEqual('UI.Elements');
+      expect(UI.Elements.toString(false)).toEqual('Elements');
+    });
   });
   
   describe('with methods', function() {
@@ -36,6 +42,22 @@ describe('#module', function() {
     
     it('adds methods to the module', function() {
       expect(Algebra.add(2, 2)).toEqual(4);
+    });
+  });
+  
+  describe('when reopening a module', function() {
+    module(Algebra, function() {
+      def('subtract', function(start, value) {
+        return start - value;
+      });
+    });
+    
+    it('retains original methods', function() {
+      expect(Algebra.add(2, 2)).toEqual(4);
+    });
+    
+    it('adds new methods', function() {
+      expect(Algebra.subtract(4, 2)).toEqual(2);
     });
   });
   

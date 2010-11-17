@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.10.4
+//  Classify.js, version 0.10.5
 //  Copyright (c) 2010, Peter Browne
 //
 //--------------------------------------------------------------------------
@@ -48,9 +48,31 @@
     
     Class.superclass = superclass;
     Class.prototype.constructor = Class;
-    Class.toString = function() { return name; };
+    namespace.def(Class.prototype, 'toString', function() {
+      return '[object ' + this.constructor.toString() + ']';
+    });
+    addName(currentObject, Class, name);
     
     return Class;
+  };
+  
+  // Builds a new module.
+  var buildModule = function(name) {
+    var Module = {};
+    addName(currentObject, Module, name);
+    return Module;
+  };
+  
+  // Adds a toString method that returns the name of the object
+  var addName = function(currentObject, object, name) {
+    namespace.def(object, 'toString', function(includeModules) {
+      if (currentObject == null || currentObject === namespace || includeModules === false) {
+        return name;
+      }
+      else {
+        return currentObject.toString() + '.' + name;
+      }
+    });
   };
   
   // Add the given methods to the object.
@@ -112,6 +134,22 @@
   //  Public Methods
   //----------------------------------
   
+  // Defines a new method. The method will be defined on the _current scope_, which will
+  // be either the `window`, a Class, or Module. Within the method definition, `this` will
+  // refer to the _current scope_. Optionally, you can set the object to define the method on as the
+  // first argument.
+  namespace.def = function(object, name, definition) {
+    if (typeof definition === 'undefined') {
+      definition = name;
+      name       = object;
+      object     = currentClass || currentObject;
+    }
+
+    object[name] = addCallSuper(definition, object[name]);
+    
+    return object[name];
+  };
+  
   // Creates a new Class. The Class will be defined on the _current scope_, which will
   // be either the `window` or a Module. Optionally you can pass in a Superclass as the first argument.
   namespace.classify = function(superclass, object, definition) {
@@ -133,34 +171,20 @@
     return object;
   };
   
-  // Defines a new method. The method will be defined on the _current scope_, which will
-  // be either the `window`, a Class, or Module. Within the method definition, `this` will
-  // refer to the _current scope_. Optionally, you can set the object to define the method on as the
-  // first argument.
-  namespace.def = function(object, name, definition) {
-    if (typeof definition === 'undefined') {
-      definition = name;
-      name       = object;
-      object     = currentClass || currentObject;
-    }
-
-    object[name] = addCallSuper(definition, object[name]);
-    
-    return object[name];
-  };
-  
   // Creates a new Module. Modules can be used as namespaces for other Modules
   // and Classes. They can also be used as a collection of method definitions
   // to be included into other Classes.
-  namespace.module = function(name, definition) {
-    if (typeof currentObject[name] === 'undefined') {
-      currentObject[name] = {};
-      currentObject[name].toString = function() { return name; };
+  namespace.module = function(object, definition) {
+    if (typeof object === 'string') {
+      if (typeof currentObject[object] === 'undefined') {
+        currentObject[object] = buildModule(object);
+      }
+      object = currentObject[object];
     }
     
-    addDefinition(null, currentObject[name], definition);
+    addDefinition(null, object, definition);
     
-    return currentObject[name];
+    return object;
   };
   
   // Includes the given Module methods into either the current Class or, optionally, the

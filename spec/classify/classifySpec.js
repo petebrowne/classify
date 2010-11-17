@@ -64,6 +64,10 @@ describe('#classify', function() {
       expect(Vehicle.toString()).toEqual('Vehicle');
     });
     
+    it('changes #toString() to include the name of the Class', function() {
+      expect(vehicle.toString()).toEqual('[object Vehicle]');
+    });
+    
     describe('with a superclass', function() {
       classify(Vehicle, 'Car', {
         initialize : function(speed) {
