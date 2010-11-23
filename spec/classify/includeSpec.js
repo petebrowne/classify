@@ -13,12 +13,16 @@ describe('#include', function() {
   });
   
   describe('when used within #classify', function() {
+    classify('MathClass', function() {
+      include(Algebra);
+    });
+    
     it('adds instance methods', function() {
-      classify('MathClass', function() {
-        include(Algebra);
-      });
-      
       expect(new MathClass().add(2, 2)).toEqual(4);
+    });
+    
+    it('does not replace #toString', function() {
+      expect(new MathClass().toString()).not.toEqual('Algebra');
     });
   });
   

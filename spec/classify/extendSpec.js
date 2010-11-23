@@ -1,18 +1,22 @@
 describe('#extend', function() {
   describe('when used within #classify', function() {
     describe('when given a module', function() {
+      module('Algebra', function() {
+        def('add', function(start, value) {
+          return start + value;
+        });
+      });
+      
+      classify('MathClass', function() {
+        extend(Algebra);
+      });
+      
       it('adds class methods', function() {
-        module('Algebra', function() {
-          def('add', function(start, value) {
-            return start + value;
-          });
-        });
-        
-        classify('MathClass', function() {
-          extend(Algebra);
-        });
-        
         expect(MathClass.add(2, 2)).toEqual(4);
+      });
+    
+      it('does not replace #toString', function() {
+        expect(MathClass.toString()).not.toEqual('Algebra');
       });
     });
     
