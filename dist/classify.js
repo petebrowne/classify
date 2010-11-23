@@ -1,6 +1,8 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.10.6
+//  Classify.js v0.10.6
+//  http://github.com/petebrowne/classify
+//
 //  Copyright (c) 2010, Peter Browne
 //
 //--------------------------------------------------------------------------
@@ -11,38 +13,38 @@
   //  Constants
   //----------------------------------
   
-  var UNDEFINED = 'undefined';
-  var FUNCTION  = 'function';
-  var STRING    = 'string';
-  var TO_STRING = 'toString';
+  var UNDEFINED = 'undefined',
+  FUNCTION      = 'function',
+  STRING        = 'string',
+  TO_STRING     = 'toString',
   
   //----------------------------------
   //  Internal Properties
   //----------------------------------
   
   // The namespace where the keyword methods will be attached to.
-  var namespace = (typeof window !== UNDEFINED && window) || this;
+  namespace = this,
   
   // The current scope to define Classes, Modules, and Methods on.
-  var currentObject = namespace;
+  currentObject = namespace,
   
   // The current Class to define Methods on.
-  var currentClass = null;
+  currentClass = null,
   
   // Flag to signal when we are initializing a superclass during inheritance
-  var inheriting = false;
+  inheriting = false;
   
   //----------------------------------
   //  Internal Methods
   //----------------------------------
     
   // Builds a new Class, with optional inheritance.
-  var buildClass = function(name, superclass) {
-    var Class = function() {
+  function buildClass(name, superclass) {
+    function Class() {
       if (!inheriting && typeof this.initialize !== UNDEFINED) {
         this.initialize.apply(this, arguments);
       }
-    };
+    }
     
     if (superclass != null) {
       inheriting = true;
@@ -63,17 +65,17 @@
     addName(currentObject, Class, name);
     
     return Class;
-  };
+  }
   
   // Builds a new module.
-  var buildModule = function(name) {
+  function buildModule(name) {
     var Module = {};
     addName(currentObject, Module, name);
     return Module;
-  };
+  }
   
   // Adds a toString method that returns the name of the object
-  var addName = function(currentObject, object, name) {
+  function addName(currentObject, object, name) {
     namespace.def(object, TO_STRING, function(includeModules) {
       if (includeModules === false || currentObject == null || currentObject === namespace) {
         return name;
@@ -82,16 +84,16 @@
         return currentObject.toString() + '.' + name;
       }
     });
-  };
+  }
   
   // Add the given methods to the object.
-  var addDefinition = function(withClass, withObject, definition) {
+  function addDefinition(withClass, withObject, definition) {
     if (withObject == null || definition == null) {
       return;
     }
     
-    var oldClass  = currentClass;
-    var oldObject = currentObject;
+    var oldClass  = currentClass,
+        oldObject = currentObject;
     
     currentClass  = withClass;
     currentObject = withObject;
@@ -109,24 +111,25 @@
     
     currentClass  = oldClass;
     currentObject = oldObject;
-  };
+  }
   
   // If necessary add a `callSuper` method to access the superclass's method.
-  var addCallSuper = function(definition, superDefinition) {
+  function addCallSuper(definition, superDefinition) {
     if (typeof superDefinition === FUNCTION &&
         typeof definition === FUNCTION &&
         callsSuper(definition)) {
           
       return function() {
-        var definitionArgs = arguments;
-        var currentSuper   = this.callSuper;
+        var result,
+            definitionArgs = arguments,
+            currentSuper   = this.callSuper;
         
         this.callSuper = function() {
           var superArgs = (arguments.length > 0) ? arguments : definitionArgs;
           return superDefinition.apply(this, superArgs);
         };
         
-        var result = definition.apply(this, definitionArgs);       
+        result = definition.apply(this, definitionArgs);       
         this.callSuper = currentSuper;
         
         return result;
@@ -134,12 +137,12 @@
     }
     
     return definition;
-  };
+  }
   
   // Test to see if a function contains a call to `callSuper`
-  var callsSuper = function(method) {
+  function callsSuper(method) {
     return (/\bcallSuper\b/).test(method.toString());
-  };
+  }
     
   //----------------------------------
   //  Public Methods
