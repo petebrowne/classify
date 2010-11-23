@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 //
-//  Classify.js, version 0.10.5
+//  Classify.js, version 0.10.6
 //  Copyright (c) 2010, Peter Browne
 //
 //--------------------------------------------------------------------------
@@ -8,11 +8,20 @@
 (function() {
   
   //----------------------------------
+  //  Constants
+  //----------------------------------
+  
+  var UNDEFINED = 'undefined';
+  var FUNCTION  = 'function';
+  var STRING    = 'string';
+  var TO_STRING = 'toString';
+  
+  //----------------------------------
   //  Internal Properties
   //----------------------------------
   
   // The namespace where the keyword methods will be attached to.
-  var namespace = (typeof window !== 'undefined' && window) || this;
+  var namespace = (typeof window !== UNDEFINED && window) || this;
   
   // The current scope to define Classes, Modules, and Methods on.
   var currentObject = namespace;
@@ -30,7 +39,7 @@
   // Builds a new Class, with optional inheritance.
   var buildClass = function(name, superclass) {
     var Class = function() {
-      if (!inheriting && typeof this.initialize !== 'undefined') {
+      if (!inheriting && typeof this.initialize !== UNDEFINED) {
         this.initialize.apply(this, arguments);
       }
     };
@@ -39,7 +48,7 @@
       inheriting = true;
       Class.prototype = new superclass();
       for (var method in superclass) {
-        if (typeof superclass[method] === 'function') {
+        if (typeof superclass[method] === FUNCTION) {
           namespace.def(Class, method, superclass[method]);
         }
       }
@@ -48,7 +57,7 @@
     
     Class.superclass = superclass;
     Class.prototype.constructor = Class;
-    namespace.def(Class.prototype, 'toString', function() {
+    namespace.def(Class.prototype, TO_STRING, function() {
       return '[object ' + this.constructor.toString() + ']';
     });
     addName(currentObject, Class, name);
@@ -65,8 +74,8 @@
   
   // Adds a toString method that returns the name of the object
   var addName = function(currentObject, object, name) {
-    namespace.def(object, 'toString', function(includeModules) {
-      if (currentObject == null || currentObject === namespace || includeModules === false) {
+    namespace.def(object, TO_STRING, function(includeModules) {
+      if (includeModules === false || currentObject == null || currentObject === namespace) {
         return name;
       }
       else {
@@ -87,12 +96,14 @@
     currentClass  = withClass;
     currentObject = withObject;
     
-    if (typeof definition === 'function') {
+    if (typeof definition === FUNCTION) {
       definition.call(withObject);
     }
     else {
       for (var name in definition) {
-        namespace.def(name, definition[name]);
+        if (!(/^(constructor|prototype|toString|valueOf)$/).test(name)) {
+          namespace.def(name, definition[name]);
+        }
       }
     }
     
@@ -102,8 +113,8 @@
   
   // If necessary add a `callSuper` method to access the superclass's method.
   var addCallSuper = function(definition, superDefinition) {
-    if (typeof superDefinition === 'function' &&
-        typeof definition === 'function' &&
+    if (typeof superDefinition === FUNCTION &&
+        typeof definition === FUNCTION &&
         callsSuper(definition)) {
           
       return function() {
@@ -139,7 +150,7 @@
   // refer to the _current scope_. Optionally, you can set the object to define the method on as the
   // first argument.
   namespace.def = function(object, name, definition) {
-    if (typeof definition === 'undefined') {
+    if (typeof definition === UNDEFINED) {
       definition = name;
       name       = object;
       object     = currentClass || currentObject;
@@ -153,14 +164,14 @@
   // Creates a new Class. The Class will be defined on the _current scope_, which will
   // be either the `window` or a Module. Optionally you can pass in a Superclass as the first argument.
   namespace.classify = function(superclass, object, definition) {
-    if (typeof definition === 'undefined') {
+    if (typeof definition === UNDEFINED) {
       definition = object;
       object     = superclass;
       superclass = null;
     }
     
-    if (typeof object === 'string') {
-      if (typeof currentObject[object] === 'undefined') {
+    if (typeof object === STRING) {
+      if (typeof currentObject[object] === UNDEFINED) {
         currentObject[object] = buildClass(object, superclass);
       }
       object = currentObject[object];
@@ -175,8 +186,8 @@
   // and Classes. They can also be used as a collection of method definitions
   // to be included into other Classes.
   namespace.module = function(object, definition) {
-    if (typeof object === 'string') {
-      if (typeof currentObject[object] === 'undefined') {
+    if (typeof object === STRING) {
+      if (typeof currentObject[object] === UNDEFINED) {
         currentObject[object] = buildModule(object);
       }
       object = currentObject[object];
@@ -190,11 +201,11 @@
   // Includes the given Module methods into either the current Class or, optionally, the
   // given Class Definition. The included methods will be available on the instance of the Class.
   namespace.include = function(object, definition) {
-    if (typeof definition === 'undefined') {
+    if (typeof definition === UNDEFINED) {
       definition = object;
       object     = currentClass || currentObject;
     }
-    else if (typeof object === 'string') {
+    else if (typeof object === STRING) {
       object = currentObject[object];
     }
     
@@ -204,11 +215,11 @@
   // Extends the current Class or, optionally, the given Class Definition with the given
   // Module methods. The methods wil be available as Class methods.
   namespace.extend = function(object, definition) {
-    if (typeof definition === 'undefined') {
+    if (typeof definition === UNDEFINED) {
       definition = object;
       object     = currentObject;
     }
-    else if (typeof object === 'string') {
+    else if (typeof object === STRING) {
       object = currentObject[object];
     }
     

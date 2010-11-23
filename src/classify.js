@@ -14,6 +14,7 @@
   var UNDEFINED = 'undefined';
   var FUNCTION  = 'function';
   var STRING    = 'string';
+  var TO_STRING = 'toString';
   
   //----------------------------------
   //  Internal Properties
@@ -56,7 +57,7 @@
     
     Class.superclass = superclass;
     Class.prototype.constructor = Class;
-    namespace.def(Class.prototype, 'toString', function() {
+    namespace.def(Class.prototype, TO_STRING, function() {
       return '[object ' + this.constructor.toString() + ']';
     });
     addName(currentObject, Class, name);
@@ -73,8 +74,8 @@
   
   // Adds a toString method that returns the name of the object
   var addName = function(currentObject, object, name) {
-    namespace.def(object, 'toString', function(includeModules) {
-      if (currentObject == null || currentObject === namespace || includeModules === false) {
+    namespace.def(object, TO_STRING, function(includeModules) {
+      if (includeModules === false || currentObject == null || currentObject === namespace) {
         return name;
       }
       else {
@@ -149,7 +150,7 @@
   // refer to the _current scope_. Optionally, you can set the object to define the method on as the
   // first argument.
   namespace.def = function(object, name, definition) {
-    if (typeof definition === 'undefined') {
+    if (typeof definition === UNDEFINED) {
       definition = name;
       name       = object;
       object     = currentClass || currentObject;
@@ -185,8 +186,8 @@
   // and Classes. They can also be used as a collection of method definitions
   // to be included into other Classes.
   namespace.module = function(object, definition) {
-    if (typeof object === 'string') {
-      if (typeof currentObject[object] === 'undefined') {
+    if (typeof object === STRING) {
+      if (typeof currentObject[object] === UNDEFINED) {
         currentObject[object] = buildModule(object);
       }
       object = currentObject[object];

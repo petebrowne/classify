@@ -1,0 +1,12 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    oyster (0.9.4)
+    packr (3.1.0)
+      oyster
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  packr

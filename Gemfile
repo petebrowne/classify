@@ -1,1 +1,2 @@
+source :gemcutter
 gem 'packr'
