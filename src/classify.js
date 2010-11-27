@@ -115,21 +115,21 @@
   
   // If necessary add a `callSuper` method to access the superclass's method.
   function addCallSuper(definition, superDefinition) {
-    if (typeof superDefinition === FUNCTION &&
-        typeof definition === FUNCTION &&
-        callsSuper(definition)) {
-          
+    if (callsSuper(definition)) {
       return function() {
-        var result,
-            definitionArgs = arguments,
-            currentSuper   = this.callSuper;
+        var currentSuper = this.callSuper, result;
         
-        this.callSuper = function() {
-          var superArgs = (arguments.length > 0) ? arguments : definitionArgs;
-          return superDefinition.apply(this, superArgs);
-        };
+        if (typeof superDefinition === FUNCTION) {
+          var defArgs = arguments;
+          this.callSuper = function() {
+            return superDefinition.apply(this, arguments.length ? arguments : defArgs);
+          };
+        }
+        else {
+          this.callSuper = function() { };
+        }
         
-        result = definition.apply(this, definitionArgs);       
+        result = definition.apply(this, arguments);       
         this.callSuper = currentSuper;
         
         return result;
@@ -141,7 +141,7 @@
   
   // Test to see if a function contains a call to `callSuper`
   function callsSuper(method) {
-    return (/\bcallSuper\b/).test(method.toString());
+    return (/\bthis\.callSuper\(\b/).test(method.toString());
   }
     
   //----------------------------------

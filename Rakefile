@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'packr'
 
-task :default => :dist
+task :default => :spec
 
 desc 'Builds the distribution'
 task :dist do
