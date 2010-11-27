@@ -141,7 +141,7 @@
   
   // Test to see if a function contains a call to `callSuper`
   function callsSuper(method) {
-    return (/\bthis\.callSuper\(\b/).test(method.toString());
+    return (/\bthis\.callSuper\b/).test(method.toString());
   }
     
   //----------------------------------
