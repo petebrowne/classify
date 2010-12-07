@@ -1,9 +1,9 @@
 //--------------------------------------------------------------------------
 //
 //  Classify.js v@VERSION
-//  http://github.com/petebrowne/classify
+//  http://classify.petebrowne.com/
 //
-//  Copyright (c) 2010, Peter Browne
+//  Copyright (c) 2010, Pete Browne
 //
 //--------------------------------------------------------------------------
 
