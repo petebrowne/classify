@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 //
 //  Classify.js v@VERSION
-//  http://github.com/petebrowne/classify
+//  http://classify.petebrowne.com/
 //
 //  Copyright (c) 2010, Peter Browne
 //
@@ -13,8 +13,7 @@
   //  Constants
   //----------------------------------
   
-  var UNDEFINED = 'undefined',
-  FUNCTION      = 'function',
+  var FUNCTION  = 'function',
   STRING        = 'string',
   
   //----------------------------------
@@ -40,7 +39,7 @@
   // Builds a new Class, with optional inheritance.
   function buildClass(name, superclass) {
     function Class() {
-      if (!inheriting && typeof this.initialize === FUNCTION) {
+      if (!inheriting && typeof this.initialize == FUNCTION) {
         this.initialize.apply(this, arguments);
       }
     }
@@ -49,7 +48,7 @@
       inheriting = true;
       Class.prototype = new superclass();
       for (var method in superclass) {
-        if (typeof superclass[method] === FUNCTION) {
+        if (typeof superclass[method] == FUNCTION) {
           namespace.def(Class, method, superclass[method]);
         }
       }
@@ -97,7 +96,7 @@
     currentClass  = withClass;
     currentObject = withObject;
     
-    if (typeof definition === FUNCTION) {
+    if (typeof definition == FUNCTION) {
       definition.call(withObject);
     }
     else {
@@ -114,7 +113,7 @@
   
   // If necessary add a `callSuper` method to access the superclass's method.
   function addCallSuper(definition, superDefinition) {
-    if (typeof superDefinition === FUNCTION && callsSuper(definition)) {
+    if (typeof superDefinition == FUNCTION && callsSuper(definition)) {
       return function() {
         var defArgs  = arguments,
             oldSuper = this.callSuper,
@@ -125,9 +124,7 @@
         };
         
         result = definition.apply(this, defArgs);
-        if (typeof oldSuper !== UNDEFINED) {
-          this.callSuper = oldSuper;
-        }
+        this.callSuper = oldSuper;
         
         return result;
       };
@@ -150,7 +147,7 @@
   // refer to the _current scope_. Optionally, you can set the object to define the method on as the
   // first argument.
   namespace.def = function(object, name, definition) {
-    if (typeof definition === UNDEFINED) {
+    if (definition == null) {
       definition = name;
       name       = object;
       object     = currentClass || currentObject;
@@ -164,14 +161,14 @@
   // Creates a new Class. The Class will be defined on the _current scope_, which will
   // be either the `window` or a Module. Optionally you can pass in a Superclass as the first argument.
   namespace.classify = function(superclass, object, definition) {
-    if (typeof definition === UNDEFINED) {
+    if (definition == null) {
       definition = object;
       object     = superclass;
       superclass = null;
     }
     
-    if (typeof object === STRING) {
-      if (typeof currentObject[object] === UNDEFINED) {
+    if (typeof object == STRING) {
+      if (currentObject[object] == null) {
         currentObject[object] = buildClass(object, superclass);
       }
       object = currentObject[object];
@@ -186,8 +183,8 @@
   // and Classes. They can also be used as a collection of method definitions
   // to be included into other Classes.
   namespace.module = function(object, definition) {
-    if (typeof object === STRING) {
-      if (typeof currentObject[object] === UNDEFINED) {
+    if (typeof object == STRING) {
+      if (currentObject[object] == null) {
         currentObject[object] = buildModule(object);
       }
       object = currentObject[object];
@@ -201,11 +198,11 @@
   // Includes the given Module methods into either the current Class or, optionally, the
   // given Class Definition. The included methods will be available on the instance of the Class.
   namespace.include = function(object, definition) {
-    if (typeof definition === UNDEFINED) {
+    if (definition == null) {
       definition = object;
       object     = currentClass || currentObject;
     }
-    else if (typeof object === STRING) {
+    else if (typeof object == STRING) {
       object = currentObject[object];
     }
     
@@ -215,11 +212,11 @@
   // Extends the current Class or, optionally, the given Class Definition with the given
   // Module methods. The methods wil be available as Class methods.
   namespace.extend = function(object, definition) {
-    if (typeof definition === UNDEFINED) {
+    if (definition == null) {
       definition = object;
       object     = currentObject;
     }
-    else if (typeof object === STRING) {
+    else if (typeof object == STRING) {
       object = currentObject[object];
     }
     
