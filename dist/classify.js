@@ -3,7 +3,7 @@
 //  Classify.js v0.10.8
 //  http://classify.petebrowne.com/
 //
-//  Copyright (c) 2010, Peter Browne
+//  Copyright (c) 2010, Pete Browne
 //
 //--------------------------------------------------------------------------
 
